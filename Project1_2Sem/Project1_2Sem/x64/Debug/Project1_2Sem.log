@@ -1,3 +1,0 @@
-﻿  Main.cpp
-C:\Users\user\Documents\git\Project1_2Sem\Project1_2Sem\Main.cpp(122,10): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
-  Project1_2Sem.vcxproj -> C:\Users\user\Documents\git\Project1_2Sem\x64\Debug\Project1_2Sem.exe
