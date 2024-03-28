@@ -30,59 +30,92 @@ void resize_arr();
 
 //////////////////////////////MAIN/////////////////////////////////////////////
 int main() {
+	int option;
+	cin >> option;
 	for (int i = 0; i < 255; i++)//Зануляем все элементы массивов
 	{
 		str1[i] = 0;
 		str2[i] = 0;
 	}
-	//////////////////////////FILE///////////////////////////////////////
-	ifstream fin(FNAME);//Определяем файл
+	if (option == 1)
+	{
+		//////////////////////////FILE///////////////////////////////////////
+		ifstream fin(FNAME);//Определяем файл
 
-	/////////EXISTANCE////////////////////////////////////////
-	if (!fin)
-	{
-		cout << "File " << FNAME << " is not found\n";
-		fin.close();
-		system("pause");
-		return 1;
-	} // end if
-	///////////NOT EMPTY//////////////////////////////////
-	if (fin.eof()) 	//empty
-	{
-		cout << "File " << FNAME << " is empty\n";
-		fin.close();
-		system("pause");
-		return 1;
-	} // end if
+		/////////EXISTANCE////////////////////////////////////////
+		if (!fin)
+		{
+			cout << "File " << FNAME << " is not found\n";
+			fin.close();
+			system("pause");
+			return -1;
+		} // end if
+		///////////NOT EMPTY//////////////////////////////////
+		if (fin.eof()) 	//empty
+		{
+			cout << "File " << FNAME << " is empty\n";
+			fin.close();
+			system("pause");
+			return -1;
+		} // end if
 
-	/////////////////////////READ/////////////////////////
-	if (fin.good())
-	{
-		while (!fin.eof()) {
-			resize_arr();
-			arr[sizem - 1] = fin.get();//Дописываем в только что созданную ячейку массива новый символ из файла
-			if (int(arr[sizem - 1]) == ENDL)
-			{
-				if (newline[0] == 0) {//Первая метка перехода на новую строку
-					newline[0] = sizem - 1;
-				}
-				else if (newline[1] == 0)//Вторая метка перехода на новую строку
+		/////////////////////////READ/////////////////////////
+		if (fin.good())
+		{
+			while (!fin.eof()) {
+				resize_arr();
+				arr[sizem - 1] = fin.get();//Дописываем в только что созданную ячейку массива новый символ из файла
+				if (int(arr[sizem - 1]) == ENDL)
 				{
-					newline[1] = sizem - 1;
+					if (newline[0] == 0) {//Первая метка перехода на новую строку
+						newline[0] = sizem - 1;
+					}
+					else if (newline[1] == 0)//Вторая метка перехода на новую строку
+					{
+						newline[1] = sizem - 1;
+					}
+					else {//Появился 3й переход на новую строку
+						cout << "Too many strings! Only 3 must be included!" << endl;
+						return -1;
+					}
 				}
-				else {//Появился 3й переход на новую строку
-					cout << "Too many strings! Only 3 must be included!" << endl;
-					return 0;
+				if (int(arr[sizem - 1]) == SPACE and newline[0] == 0) {//Проверка на 1 слово в первой строке
+					cout << "Only 1 word must be included in 1st string!" << endl;
+					return -1;
 				}
 			}
-			if (int(arr[sizem - 1]) == SPACE and newline[0] == 0) {//Проверка на 1 слово в первой строке
-				cout << "Only 1 word must be included in 1st string!" << endl;
-				return 0;
+			cout << "Reading ended!" << endl;
+			fin.close();
+		}
+	}
+	else {
+	/////////////////////////READ console/////////////////////////
+		cin.get();
+		for (int i = 0; i < 3; i++)
+		{
+			int flag = 0;
+			cout << "Enter " << i + 1 << " string." << endl;
+			while (arr[sizem - 1]!='\n' or flag==0) {
+				flag = 1;
+				resize_arr();
+				arr[sizem - 1] = cin.get();//Дописываем в только что созданную ячейку массива новый символ из файла
+
+				if (int(arr[sizem - 1]) == SPACE and newline[0] == 0) {//Проверка на 1 слово в первой строке
+					cout << "Only 1 word must be included in 1st string!" << endl;
+					return -1;
+				}
+			}
+			if (i == 0) {//Первая метка перехода на новую строку
+				newline[0] = sizem - 1;
+			}
+			else if (i == 1)//Вторая метка перехода на новую строку
+			{
+				newline[1] = sizem - 1;
 			}
 		}
 		cout << "Reading ended!" << endl;
-		fin.close();
 	}
+	
 
 	//------------------------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                  1 Печать сведений о совпадающих в заданных строках символах                                         //
@@ -112,9 +145,13 @@ int main() {
 	//------------------------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                  2 Выявление строки, в которой заданное слово встречается чаще                                       //
 	//------------------------------------------------------------------------------------------------------------------------------------------------------//
-	const int wordlen = newline[0];//Длина слова из первой строки
+	int wordlen = newline[0];//Длина слова из первой строки
 	char* word = new char[wordlen];//Слово из первой строки
-
+	if (wordlen == 0)
+	{
+		cout << endl << "No word entered in first string" << endl;
+		return 0;
+	}
 	for (int i = 0; i < wordlen; i++)//Запись первой строки в более удобный для работы вид
 	{
 		word[i] = arr[i];
