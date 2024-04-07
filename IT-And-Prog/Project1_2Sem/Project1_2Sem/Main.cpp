@@ -23,6 +23,9 @@ int lenCounter = 0;//Переменная для прохода по слову из первой строки
 
 //////////////////////////////Prorots//////////////////////////////////////
 void resize_arr();
+int get_option();
+int read_file(const char* NAME, char* file);
+int read_console(char* file);
 
 
 
@@ -30,66 +33,33 @@ void resize_arr();
 
 //////////////////////////////MAIN/////////////////////////////////////////////
 int main() {
-	int option;
-	cin >> option;
 	for (int i = 0; i < 255; i++)//Зануляем все элементы массивов
 	{
 		str1[i] = 0;
 		str2[i] = 0;
 	}
-	if (option == 1)
+	if (get_option() == 1)
 	{
-		//////////////////////////FILE///////////////////////////////////////
-		ifstream fin(FNAME);//Определяем файл
-
-		/////////EXISTANCE////////////////////////////////////////
-		if (!fin)
+		switch (read_file(FNAME, arr))
 		{
+		case -1:
 			cout << "File " << FNAME << " is not found\n";
-			fin.close();
-			system("pause");
 			return -1;
-		} // end if
-		///////////NOT EMPTY//////////////////////////////////
-		if (fin.eof()) 	//empty
-		{
+		case -2:
 			cout << "File " << FNAME << " is empty\n";
-			fin.close();
-			system("pause");
 			return -1;
-		} // end if
-
-		/////////////////////////READ/////////////////////////
-		if (fin.good())
-		{
-			while (!fin.eof()) {
-				resize_arr();
-				arr[sizem - 1] = fin.get();//Дописываем в только что созданную ячейку массива новый символ из файла
-				if (int(arr[sizem - 1]) == ENDL)
-				{
-					if (newline[0] == 0) {//Первая метка перехода на новую строку
-						newline[0] = sizem - 1;
-					}
-					else if (newline[1] == 0)//Вторая метка перехода на новую строку
-					{
-						newline[1] = sizem - 1;
-					}
-					else {//Появился 3й переход на новую строку
-						cout << "Too many strings! Only 3 must be included!" << endl;
-						return -1;
-					}
-				}
-				if (int(arr[sizem - 1]) == SPACE and newline[0] == 0) {//Проверка на 1 слово в первой строке
-					cout << "Only 1 word must be included in 1st string!" << endl;
-					return -1;
-				}
-			}
+		case -3:
+			cout << "Too many strings! Only 3 must be included!" << endl;
+			return -1;
+		case -4:
+			cout << "Only 1 word must be included in 1st string!" << endl;
+			return -1;
+		default:
 			cout << "Reading ended!" << endl;
-			fin.close();
+			break;
 		}
 	}
 	else {
-	/////////////////////////READ console/////////////////////////
 		cin.get();
 		for (int i = 0; i < 3; i++)
 		{
@@ -217,4 +187,78 @@ void resize_arr() {
 	sizem = newSize;
 	delete[] arr;
 	arr = newArr;
+}
+int get_option() {
+	int option;
+	cin >> option;
+	return option;
+}
+int read_file(const char* NAME, char* file) {
+	//////////////////////////FILE///////////////////////////////////////
+	ifstream fin(NAME);//Определяем файл
+
+	/////////EXISTANCE////////////////////////////////////////
+	if (!fin)
+	{
+		fin.close();
+		return -1;
+	} // end if
+	///////////NOT EMPTY//////////////////////////////////
+	if (fin.eof()) 	//empty
+	{
+		fin.close();
+		return -2;
+	} // end if
+
+	/////////////////////////READ/////////////////////////
+	if (fin.good())
+	{
+		while (!fin.eof()) {
+			resize_arr();
+			arr[sizem - 1] = fin.get();//Дописываем в только что созданную ячейку массива новый символ из файла
+			if (int(arr[sizem - 1]) == ENDL)
+			{
+				if (newline[0] == 0) {//Первая метка перехода на новую строку
+					newline[0] = sizem - 1;
+				}
+				else if (newline[1] == 0)//Вторая метка перехода на новую строку
+				{
+					newline[1] = sizem - 1;
+				}
+				else {//Появился 3й переход на новую строку
+					return -3;
+				}
+			}
+			if (int(arr[sizem - 1]) == SPACE and newline[0] == 0) {//Проверка на 1 слово в первой строке
+				return -4;
+			}
+		}
+		fin.close();
+	}
+	return 0;
+}
+int read_console(char* file) {
+	cin.get();
+	for (int i = 0; i < 3; i++)
+	{
+		int flag = 0;
+		cout << "Enter " << i + 1 << " string." << endl;
+		while (arr[sizem - 1] != '\n' or flag == 0) {
+			flag = 1;
+			resize_arr();
+			arr[sizem - 1] = cin.get();//Дописываем в только что созданную ячейку массива новый символ из файла
+
+			if (int(arr[sizem - 1]) == SPACE and newline[0] == 0) {//Проверка на 1 слово в первой строке
+				cout << "Only 1 word must be included in 1st string!" << endl;
+				return -1;
+			}
+		}
+		if (i == 0) {//Первая метка перехода на новую строку
+			newline[0] = sizem - 1;
+		}
+		else if (i == 1)//Вторая метка перехода на новую строку
+		{
+			newline[1] = sizem - 1;
+		}
+	}
 }

@@ -1,0 +1,5 @@
+﻿  main.cpp
+E:\Workspace1\IT-And-Prog\TestV\TestV\main.cpp(77,12): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+E:\Workspace1\IT-And-Prog\TestV\TestV\main.cpp(93,10): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+E:\Workspace1\IT-And-Prog\TestV\TestV\main.cpp(98,10): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+  TestV.vcxproj -> E:\Workspace1\IT-And-Prog\TestV\x64\Debug\TestV.exe
